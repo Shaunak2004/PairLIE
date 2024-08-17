@@ -26,7 +26,7 @@ class DatasetFromFolder(data.Dataset):
 
     def __getitem__(self, index):
         index = index
-        data_filenames = [join(join(self.data_dir, str(index+1)), x) for x in listdir(join(self.data_dir, str(index+1))) if is_image_file(x)]
+        data_filenames = [join(join(self.data_dir, str(index+1)), x) for x in listdir(join(self.data_dir, str(index))) if is_image_file(x)]
         num = len(data_filenames)
         index1 = random.randint(1,num)
         index2 = random.randint(1,num)
