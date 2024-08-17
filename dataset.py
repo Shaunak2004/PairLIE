@@ -22,7 +22,7 @@ class DatasetFromFolder(data.Dataset):
     def __init__(self, data_dir, transform=None):
         super(DatasetFromFolder, self).__init__()
         self.data_dir = data_dir
-        self.transform = 
+        self.transform = transforms
         self.subdirectories = [d for d in os.listdir(data_dir) if isdir(join(data_dir, d))]
 
     def __getitem__(self, index):
