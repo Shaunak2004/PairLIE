@@ -33,7 +33,8 @@ class DatasetFromFolder(data.Dataset):
         
         # List all image files in the directory
         data_filenames = [join(dir_path, x) for x in listdir(dir_path) if is_image_file(x)]
-        num = len(data_filenames)
+        self.datafilenames = data_filenames
+        num = len(self.data_filenames)
         
         # Check if there are any images in the directory
         if num == 0:
@@ -46,11 +47,11 @@ class DatasetFromFolder(data.Dataset):
         while index1 == index2:
             index2 = random.randint(1, num)
 
-        im1 = load_img(data_filenames[index1 - 1])
-        im2 = load_img(data_filenames[index2 - 1])
+        im1 = load_img(self.data_filenames[index1 - 1])
+        im2 = load_img(self.data_filenames[index2 - 1])
 
-        _, file1 = os.path.split(data_filenames[index1 - 1])
-        _, file2 = os.path.split(data_filenames[index2 - 1])
+        _, file1 = os.path.split(self.data_filenames[index1 - 1])
+        _, file2 = os.path.split(self.data_filenames[index2 - 1])
 
         seed = np.random.randint(123456789)
         if self.transform:
@@ -65,7 +66,7 @@ class DatasetFromFolder(data.Dataset):
 
     
     def __len__(self):
-        return len(data_filenames)
+        return len(self.data_filenames)
 
 class DatasetFromFolderEval(data.Dataset):
     def __init__(self, data_dir, transform=None):
