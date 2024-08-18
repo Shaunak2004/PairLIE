@@ -23,35 +23,38 @@ class DatasetFromFolder(data.Dataset):
         super(DatasetFromFolder, self).__init__()
         self.data_dir = data_dir
         self.transform = transform
+        self.num_samples = 946  # Set this to the correct number of samples in your dataset
 
     def __getitem__(self, index):
+        # Make sure the index is within the range of your dataset
+        index = index % self.num_samples
+
         dir_path = join(self.data_dir, str(index + 1))
-        
+
         # Check if directory exists
         if not os.path.isdir(dir_path):
             raise FileNotFoundError(f"Directory not found: {dir_path}")
-        
+
         # List all image files in the directory
         data_filenames = [join(dir_path, x) for x in listdir(dir_path) if is_image_file(x)]
-        self.datafilenames = data_filenames
-        num = 1892
-        
+        num = len(data_filenames)
+
         # Check if there are any images in the directory
         if num == 0:
             raise FileNotFoundError(f"No image files found in directory: {dir_path}")
-        
+
         index1 = random.randint(1, num)
         index2 = random.randint(1, num)
-        
+
         # Ensure index1 and index2 are different
         while index1 == index2:
             index2 = random.randint(1, num)
 
-        im1 = load_img(self.data_filenames[index1 - 1])
-        im2 = load_img(self.data_filenames[index2 - 1])
+        im1 = load_img(data_filenames[index1 - 1])
+        im2 = load_img(data_filenames[index2 - 1])
 
-        _, file1 = os.path.split(self.data_filenames[index1 - 1])
-        _, file2 = os.path.split(self.data_filenames[index2 - 1])
+        _, file1 = os.path.split(data_filenames[index1 - 1])
+        _, file2 = os.path.split(data_filenames[index2 - 1])
 
         seed = np.random.randint(123456789)
         if self.transform:
@@ -61,12 +64,12 @@ class DatasetFromFolder(data.Dataset):
             random.seed(seed)
             torch.manual_seed(seed)
             im2 = self.transform(im2)
-        
+
         return im1, im2, file1, file2
 
-    
     def __len__(self):
-        return 1892
+        return self.num_samples
+
 
 class DatasetFromFolderEval(data.Dataset):
     def __init__(self, data_dir, transform=None):
