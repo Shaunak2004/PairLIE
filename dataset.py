@@ -34,7 +34,7 @@ class DatasetFromFolder(data.Dataset):
         # List all image files in the directory
         data_filenames = [join(dir_path, x) for x in listdir(dir_path) if is_image_file(x)]
         self.datafilenames = data_filenames
-        num = 946
+        num = 1892
         
         # Check if there are any images in the directory
         if num == 0:
@@ -66,7 +66,7 @@ class DatasetFromFolder(data.Dataset):
 
     
     def __len__(self):
-        return 946
+        return 1892
 
 class DatasetFromFolderEval(data.Dataset):
     def __init__(self, data_dir, transform=None):
