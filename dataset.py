@@ -22,44 +22,32 @@ class DatasetFromFolder(data.Dataset):
     def __init__(self, data_dir, transform=None):
         super(DatasetFromFolder, self).__init__()
         self.data_dir = data_dir
-        self.transform = transforms
-        self.subdirectories = [d for d in os.listdir(data_dir) if isdir(join(data_dir, d))]
+        self.transform = transform
 
     def __getitem__(self, index):
-        sub_dir = join(self.data_dir, str(index + 1))
-        
-        if not isdir(sub_dir):
-            raise FileNotFoundError(f"Directory {sub_dir} does not exist.")
-        
-        data_filenames = [join(sub_dir, x) for x in os.listdir(sub_dir) if is_image_file(x)]
-        
-        if len(data_filenames) < 2:
-            raise ValueError(f"Not enough images in directory {sub_dir} to sample two different ones.")
-        index1 = random.randint(0, len(data_filenames) - 1)
-        index2 = random.randint(0, len(data_filenames) - 1)
-        
-        while index1 == index2:
-            index2 = random.randint(0, len(data_filenames) - 1)
+        index = index
+        data_filenames = [join(join(self.data_dir, str(index+1)), x) for x in listdir(join(self.data_dir, str(index+1))) if is_image_file(x)]
+        num = len(data_filenames)
+        index1 = random.randint(1,num)
+        index2 = random.randint(1,num)
+        while abs(index1 - index2) == 0:
+            index2 = random.randint(1,num)
 
-        im1 = load_img(data_filenames[index1])
-        im2 = load_img(data_filenames[index2])
+        im1 = load_img(data_filenames[index1-1])
+        im2 = load_img(data_filenames[index2-1])
 
-        file1 = basename(data_filenames[index1])
-        file2 = basename(data_filenames[index2])
+        _, file1 = os.path.split(data_filenames[index1-1])
+        _, file2 = os.path.split(data_filenames[index2-1])
 
-        seed = np.random.randint(123456789)
+        seed = np.random.randint(123456789) # make a seed with numpy generator 
         if self.transform:
-            random.seed(seed)
-            torch.manual_seed(seed)
+            random.seed(seed) # apply this seed to img tranfsorms
+            torch.manual_seed(seed) # needed for torchvision 0.7
             im1 = self.transform(im1)
             random.seed(seed)
-            torch.manual_seed(seed)
-            im2 = self.transform(im2)
-        
+            torch.manual_seed(seed)         
+            im2 = self.transform(im2)        
         return im1, im2, file1, file2
-
-    def __len__(self):
-        return len(self.subdirectories)  # Adjust this based on actual dataset size
 
     def __len__(self):
         return 324 # for custom datasets, please check the dataset size and modify this number
@@ -83,4 +71,3 @@ class DatasetFromFolderEval(data.Dataset):
 
     def __len__(self):
         return len(self.data_filenames)
-
