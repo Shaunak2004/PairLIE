@@ -65,7 +65,7 @@ class DatasetFromFolder(data.Dataset):
 
     
     def __len__(self):
-        return len(self.data_filenames)
+        return len(data_filenames)
 
 class DatasetFromFolderEval(data.Dataset):
     def __init__(self, data_dir, transform=None):
